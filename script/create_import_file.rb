@@ -96,4 +96,33 @@ MlExp.all.each do |mlb|
       )
     end
   end
+
+  #final pass through scraped data to fill in the blanks
+  check_data = %w{ title price copyright_date pub_marketing dewey author int_level read_level length binding lex bisac_cats atos_l
+                   atos_int_lvl atos_p quiz rc_lvl rc_pnts grl}
+  ImpFrmt.all.each do |imp|
+    in_rec = InScrape.find_by_isbn(imp.isbn)
+    bow_rec = BScrape.find_by_isbn(imp.isbn)
+    check_data.each do |cd|
+      check_val = imp.send(cd).to_s
+      if check_val.blank?
+        i_val = in_rec.send(imp)
+        if !i_val.blank?
+          imp.update_attribute(cd.to_sym,i_val)
+        else
+          b_val = bow_rec.send(imp)
+          if !b_val.empty?
+            imp.update_attribute(cd.to_sym,b_val)
+          end
+        end
+      end
+    end
+
+  end
+
+
+
+
+
+
 end
