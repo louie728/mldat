@@ -1,3 +1,4 @@
-class InScrape < ActiveRecord::Base
+class InScrape < ScrapeRecord
+
 
 end

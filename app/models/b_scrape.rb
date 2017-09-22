@@ -1,3 +1,3 @@
-class BScrape < ActiveRecord::Base
+class BScrape < ScrapeRecord
 
 end

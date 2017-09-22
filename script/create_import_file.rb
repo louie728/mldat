@@ -106,11 +106,27 @@ MlExp.all.each do |mlb|
     check_data.each do |cd|
       check_val = imp.send(cd).to_s
       if check_val.blank?
-        i_val = in_rec.send(imp)
+        if %w{int_level read_level}.include?(cd)
+          fld_nam = (cd == 'int_level') ? 'mlane_int_level' : 'mlane_read_level'
+          i_val = in_rec.send(fld_nam)
+        elsif cd == 'bisac_cats'
+          i_val = in_rec.send(%Q{mlane_#{imp}})
+        else
+          i_val = in_rec.send(imp)
+        end
+
         if !i_val.blank?
           imp.update_attribute(cd.to_sym,i_val)
         else
-          b_val = bow_rec.send(imp)
+          if %w{int_level read_level}.include?(cd)
+            fld_nam = (cd == 'int_level') ? 'mlane_int_level' : 'mlane_read_level'
+            b_val = bow_rec.send(fld_nam)
+          elsif cd == 'bisac_cats'
+            b_val = bow_rec.send(%Q{mlane_#{imp}})
+          else
+            b_val = bow_rec.send(imp)
+          end
+
           if !b_val.empty?
             imp.update_attribute(cd.to_sym,b_val)
           end
